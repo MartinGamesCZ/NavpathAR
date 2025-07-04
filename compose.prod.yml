@@ -1,0 +1,26 @@
+services:
+  web:
+    tty: true
+    image: node:20
+    volumes:
+      - ./packages:/app
+    working_dir: /app/frontend
+    command: ["npm", "run", "start"]
+    restart: always
+    labels:
+      - traefik.http.routers.app_navpathar.rule=Host(`navpathar.mpdev.tech`)
+      - traefik.http.services.app_navpathar.loadbalancer.server.port=3000
+      - traefik.docker.network=prod_NavpathAR
+    env_file:
+      - ../.env
+    networks:
+      NavpathAR:
+        ipv4_address: 10.0.49.2
+
+networks:
+  NavpathAR:
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.0.49.0/24
+          gateway: 10.0.49.1

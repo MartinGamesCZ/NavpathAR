@@ -1,0 +1,39 @@
+name: Build and push to servers
+
+on:
+  push:
+    branches:
+      - prod
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare and clone
+        uses: appleboy/ssh-action@v0.1.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            rm -rf /home/app/NavpathAR/production || true
+            mkdir -p /home/app/NavpathAR/production
+            cd /home/app/NavpathAR/production
+            git clone --single-branch --branch ${{ github.head_ref || github.ref_name }} https://oauth2:${{ secrets.PAT }}@github.com/MartinGamesCZ/NavpathAR.git .
+
+      - name: Build and restart
+        uses: appleboy/ssh-action@v0.1.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            docker compose -f /home/app/NavpathAR/production/compose.prod.yml down
+            cd /home/app/NavpathAR/production/packages/frontend
+            /root/.bun/bin/bun install
+            /root/.bun/bin/bun run build
+            docker compose -f /home/app/NavpathAR/production/compose.prod.yml up -d frontend
