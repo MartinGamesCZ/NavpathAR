@@ -11,8 +11,6 @@ services:
       - traefik.http.routers.app_navpathar.rule=Host(`navpathar.mpdev.tech`)
       - traefik.http.services.app_navpathar.loadbalancer.server.port=3000
       - traefik.docker.network=prod_NavpathAR
-    env_file:
-      - ../.env
     networks:
       NavpathAR:
         ipv4_address: 10.0.49.2
