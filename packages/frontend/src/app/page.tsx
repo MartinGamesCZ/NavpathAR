@@ -12,7 +12,7 @@ function GroundPosition() {
   const groundPosition = useRef<THREE.Vector3 | null>(null);
 
   useEffect(() => {
-    if (origin && groundPosition.current) {
+    if (origin) {
       groundPosition.current = origin.position;
     }
   }, [origin]);
