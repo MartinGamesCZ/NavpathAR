@@ -55,7 +55,12 @@ function Box() {
 export default function App() {
   return (
     <>
-      <button onClick={() => store.enterAR()}>Enter AR</button>
+      <button
+        onClick={() => store.enterAR()}
+        className="w-32 rounded-xl px-4 py-2 m-16 bg-blue-500"
+      >
+        Start
+      </button>
       <Canvas>
         <XR store={store}>
           <ambientLight intensity={0.8} />
